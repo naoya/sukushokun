@@ -1,6 +1,3 @@
-require 'bundler'
-Bundler.require
-
 set :port, 3000
 
 get '/' do
