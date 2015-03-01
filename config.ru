@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'slim'
-require 'app'
+require './app'
 
 run Sinatra::Application
