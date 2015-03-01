@@ -1,12 +1,14 @@
 $(function(){
   $('#btn-screenshot').click(function () {
+    var url = $('#url').val();
+    if (!url) {
+      window.alert('URLを入力してね');
+      return;
+    }
+
     $('#indicator').show();
 
-    var url = $('#url').val();
-    // TODO: URL Validation
-
-    var request = '/screenshot?url=' + url;
-
+    var request = '/screenshot?url=' + encodeURIComponent(url);
     if ($('#is-mobile').prop('checked')) {
       request += '&mobile=true';
     }
