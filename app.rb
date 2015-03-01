@@ -9,7 +9,11 @@ end
 
 get '/screenshot' do
   @url = params[:url]
-  base64 = `casperjs bin/screenshot.js '#{@url}'`
+  command = "casperjs bin/screenshot.js '#{@url}'"
+  if params[:mobile]
+    command = command + " mobile"
+  end
+  base64 = `#{command}`
   halt 500, 'error' unless base64
   return base64
 end
