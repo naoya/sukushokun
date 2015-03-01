@@ -1,6 +1,47 @@
+body {
+    font-family: "Helvetica Neue","Helvetica";
+}
+
+h1 {
+    font-size: 40px;
+    letter-spacing: -1px;
+    font-weight: 200;
+    margin: 0;
+    margin-top: 1.2em;
+}
+
+p {
+    color: #666;
+    font-weight: 200;
+}
+
+.intro p {
+    margin: 0;
+}
+
+.control {
+    margin-top: 20px;
+}
+
+#url {
+    width: 70%;
+    padding: 10px;
+    font-size: 1.2em;
+}
+
+#btn-screenshot {
+    margin-left: 10px;
+    font-size: 1.2em;
+    padding: 10px;
+}
+
 #result img {
     max-width: 640px;
     border: 1px solid #999;
     display: block;
     margin: 1em;
+}
+
+label {
+    color: #666;
 }
