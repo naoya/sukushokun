@@ -12,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "browserify": "^9.0.3",
+    "fluxxor": "^1.5.2",
     "gulp": "^3.8.11",
     "gulp-util": "^3.0.4",
     "react": "^0.12.0",
