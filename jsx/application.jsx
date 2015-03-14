@@ -12,7 +12,8 @@ var App = React.createClass({
     return {
       screenshots: [],
       loading:     false,
-      url:         null
+      url:         null,
+      isMobile:    false,
     };
   },
 
@@ -29,9 +30,8 @@ var App = React.createClass({
     this.setState({ loading: true });
 
     var endpoint = '/screenshot?url=' + encodeURIComponent(this.state.url);
-    // if ($('#is-mobile').prop('checked')) {
-    //   endpoint += '&mobile=true';
-    // }    
+    if (this.state.isMobile)
+      endpoint += '&mobile=true';
 
     request
       .get(endpoint)
@@ -43,14 +43,23 @@ var App = React.createClass({
         });     
       }.bind(this));
   },
+
   handleUrl: function(value) {
     this.setState({ url: value });
   },
+
+  handleMobileFlag: function(value) {
+    this.setState({ isMobile: value });
+  },
+
   render: function() {
     return (
       <div>
         <h1>スクショ撮る君</h1>
-        <Form onSubmit={this.takeScreenShot} onUrlChange={this.handleUrl} url={this.state.url} />
+        <Form onSubmit={this.takeScreenShot}
+              onUrlChange={this.handleUrl}
+              onMobileFlagChange={this.handleMobileFlag}
+              url={this.state.url} />
         <Indicator loading={this.state.loading} />
         <ScreenShotList screenshots={this.state.screenshots} />
         <RouteHandler />
@@ -61,12 +70,16 @@ var App = React.createClass({
 
 var Form = React.createClass({
   propTypes: {
-    url:         React.PropTypes.string,
-    onUrlChange: React.PropTypes.func.isRequired,
-    onSubmit:    React.PropTypes.func.isRequired,
+    url:                React.PropTypes.string,
+    onUrlChange:        React.PropTypes.func.isRequired,
+    onMobileFlagChange: React.PropTypes.func.isRequired,
+    onSubmit:           React.PropTypes.func.isRequired,
   },
   handleUrlChange: function(e) {
     this.props.onUrlChange(e.target.value);
+  },
+  handleMobileFlagChange: function(e) {
+    this.props.onMobileFlagChange(e.target.checked);
   },
   handleButton: function() {
     this.props.onSubmit();
@@ -76,6 +89,10 @@ var Form = React.createClass({
       <div>
         <input id="url" type="text" placeholder="http://" onChange={this.handleUrlChange} value={this.props.url} />
         <button id="btn-screenshot" onClick={this.handleButton}>撮る</button>
+        <div>
+          <input type="checkbox" id="is-mobile" onChange={this.handleMobileFlagChange} />
+          <label htmlFor="is-mobile" onChange={this.handleMobileFlagChange}>スマートフォン</label>
+        </div>
       </div>
     );
   }

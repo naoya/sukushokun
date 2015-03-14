@@ -13,7 +13,8 @@ var App = React.createClass({displayName: "App",
     return {
       screenshots: [],
       loading:     false,
-      url:         null
+      url:         null,
+      isMobile:    false,
     };
   },
 
@@ -30,9 +31,8 @@ var App = React.createClass({displayName: "App",
     this.setState({ loading: true });
 
     var endpoint = '/screenshot?url=' + encodeURIComponent(this.state.url);
-    // if ($('#is-mobile').prop('checked')) {
-    //   endpoint += '&mobile=true';
-    // }    
+    if (this.state.isMobile)
+      endpoint += '&mobile=true';
 
     request
       .get(endpoint)
@@ -44,14 +44,23 @@ var App = React.createClass({displayName: "App",
         });     
       }.bind(this));
   },
+
   handleUrl: function(value) {
     this.setState({ url: value });
   },
+
+  handleMobileFlag: function(value) {
+    this.setState({ isMobile: value });
+  },
+
   render: function() {
     return (
       React.createElement("div", null, 
         React.createElement("h1", null, "スクショ撮る君"), 
-        React.createElement(Form, {onSubmit: this.takeScreenShot, onUrlChange: this.handleUrl, url: this.state.url}), 
+        React.createElement(Form, {onSubmit: this.takeScreenShot, 
+              onUrlChange: this.handleUrl, 
+              onMobileFlagChange: this.handleMobileFlag, 
+              url: this.state.url}), 
         React.createElement(Indicator, {loading: this.state.loading}), 
         React.createElement(ScreenShotList, {screenshots: this.state.screenshots}), 
         React.createElement(RouteHandler, null)
@@ -62,12 +71,16 @@ var App = React.createClass({displayName: "App",
 
 var Form = React.createClass({displayName: "Form",
   propTypes: {
-    url:         React.PropTypes.string,
-    onUrlChange: React.PropTypes.func.isRequired,
-    onSubmit:    React.PropTypes.func.isRequired,
+    url:                React.PropTypes.string,
+    onUrlChange:        React.PropTypes.func.isRequired,
+    onMobileFlagChange: React.PropTypes.func.isRequired,
+    onSubmit:           React.PropTypes.func.isRequired,
   },
   handleUrlChange: function(e) {
     this.props.onUrlChange(e.target.value);
+  },
+  handleMobileFlagChange: function(e) {
+    this.props.onMobileFlagChange(e.target.checked);
   },
   handleButton: function() {
     this.props.onSubmit();
@@ -76,7 +89,11 @@ var Form = React.createClass({displayName: "Form",
     return (
       React.createElement("div", null, 
         React.createElement("input", {id: "url", type: "text", placeholder: "http://", onChange: this.handleUrlChange, value: this.props.url}), 
-        React.createElement("button", {id: "btn-screenshot", onClick: this.handleButton}, "撮る")
+        React.createElement("button", {id: "btn-screenshot", onClick: this.handleButton}, "撮る"), 
+        React.createElement("div", null, 
+          React.createElement("input", {type: "checkbox", id: "is-mobile", onChange: this.handleMobileFlagChange}), 
+          React.createElement("label", {htmlFor: "is-mobile", onChange: this.handleMobileFlagChange}, "スマートフォン")
+        )
       )
     );
   }
