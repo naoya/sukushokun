@@ -7,7 +7,7 @@ var props = {
   // iPhone 5, iOS 8.0.2
   mobile: {
     ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 8_0_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12A405 Safari/600.1.4",
-    viewport: { width: 320, height: 568 }
+    viewport: { width: 640, height: 1136 }
   }
 };
 
