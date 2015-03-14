@@ -1,8 +1,13 @@
 var gulp       = require('gulp');
-var plumber    = require('gulp-plumber');
+var util       = require('gulp-util');
 var browserify = require('browserify');
 var reactify   = require('reactify');
 var source     = require('vinyl-source-stream');
+
+function errorHandler (err) {
+  util.log(util.colors.red('Error'), err.message);
+  this.end();
+}
 
 gulp.task('build', function() {
   browserify({
@@ -10,6 +15,7 @@ gulp.task('build', function() {
     transform: [reactify]
   })
       .bundle()
+      .on('error', errorHandler)
       .pipe(source('application.js'))
       .pipe(gulp.dest('./public/js'));
 });
