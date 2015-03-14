@@ -11,8 +11,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "browserify": "^9.0.3",
     "gulp": "^3.8.11",
     "gulp-plumber": "^1.0.0",
-    "gulp-react": "^3.0.1"
+    "react": "^0.13.0",
+    "reactify": "^1.1.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }
