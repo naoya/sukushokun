@@ -37,7 +37,7 @@ var App = React.createClass({displayName: "App",
     request
       .get(endpoint)
       .end(function (err, response) {
-        var screenshot = { id:3, data:response.text };
+        var screenshot = { id:this.state.screenshots.length + 1, data:response.text };
         this.setState({
           screenshots: [screenshot].concat(this.state.screenshots),
           loading:     false
