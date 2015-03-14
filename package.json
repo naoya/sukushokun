@@ -4,7 +4,7 @@
     "sukushokun": "screenshot.js"
   },
   "scripts": {
-    "react": "gulp react",
+    "react": "gulp build",
     "watch": "gulp watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,8 +12,9 @@
   "license": "ISC",
   "devDependencies": {
     "browserify": "^9.0.3",
+    "fluxxor": "^1.5.2",
     "gulp": "^3.8.11",
-    "gulp-plumber": "^1.0.0",
+    "gulp-util": "^3.0.4",
     "react": "^0.12.0",
     "react-router": "^0.12.4",
     "reactify": "^1.1.0",

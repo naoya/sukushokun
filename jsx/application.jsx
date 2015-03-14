@@ -1,57 +1,94 @@
 var React   = require('react');
+var Fluxxor = require('fluxxor');
 var request = require('superagent');
 var Router  = require('react-router');
 
 var Route       = Router.Route;
 var RouteHandler = Router.RouteHandler;
 
-var App = React.createClass({
-  mixins: [ Router.State ],
+var constants = {
+  LOAD_SCREENSHOT:         "LOAD_SCREENSHOT",
+  LOAD_SCREENSHOT_SUCCESS: "LOAD_SCREENSHOT_SUCCESS"
+};
 
+var ScreenshotClient = {
+  isMobile: false,
+  load: function(url, callback) {
+    var endpoint = '/screenshot?url=' + encodeURIComponent(url);
+    if (this.isMobile)
+       endpoint += '&mobile=true';
+    request.get(endpoint).end(callback);
+  }
+};
+
+var actions = {
+  takeScreenshot: function(url, isMobile) {
+    this.dispatch(constants.LOAD_SCREENSHOT);
+    ScreenshotClient.isMobile = isMobile;
+    ScreenshotClient.load(url, function(err, response) {
+      // FIXME: erro handling
+      this.dispatch(constants.LOAD_SCREENSHOT_SUCCESS, {data:response.text});
+    }.bind(this));
+  }
+};
+
+var ScreenshotStore = Fluxxor.createStore({
+  initialize: function() {
+    this.screenshots = [];
+    this.loading     = false;
+    this.bindActions(
+      constants.LOAD_SCREENSHOT,         this.onLoadScreenshot,
+      constants.LOAD_SCREENSHOT_SUCCESS, this.onLoadScreenshotSuccess
+    );
+  },
+  onLoadScreenshot: function() {
+    this.loading = true;
+    this.emit('change');
+  },
+  onLoadScreenshotSuccess: function(payload) {
+    this.loading = false;
+    var screenshot = { id:this.screenshots.length + 1, data:payload.data };
+    this.screenshots = [screenshot].concat(this.screenshots);
+    this.emit('change');
+  },
+  getState: function() {
+    return {
+      screenshots: this.screenshots,
+      loading:     this.loading
+    };
+  }
+});
+
+var FluxMixin = Fluxxor.FluxMixin(React),
+    StoreWatchMixin = Fluxxor.StoreWatchMixin;
+
+var App = React.createClass({
+  mixins: [ Router.State, FluxMixin, StoreWatchMixin('ScreenshotStore') ],
   getInitialState: function() {
     return {
-      screenshots: [],
-      loading:     false,
       url:         null,
       isMobile:    false,
     };
   },
-
+  getStateFromFlux: function() {
+    return this.getFlux().store("ScreenshotStore").getState();
+  },
   componentDidMount: function() {
     this.handleUrl(this.getQuery().url);
   },
-  
   takeScreenShot: function() {
     if (!this.state.url) {
       window.alert('URLを入力してね');
       return;
     }
-
-    this.setState({ loading: true });
-
-    var endpoint = '/screenshot?url=' + encodeURIComponent(this.state.url);
-    if (this.state.isMobile)
-      endpoint += '&mobile=true';
-
-    request
-      .get(endpoint)
-      .end(function (err, response) {
-        var screenshot = { id:this.state.screenshots.length + 1, data:response.text };
-        this.setState({
-          screenshots: [screenshot].concat(this.state.screenshots),
-          loading:     false
-        });     
-      }.bind(this));
+    return this.getFlux().actions.takeScreenshot(this.state.url, this.state.isMobile);
   },
-
   handleUrl: function(value) {
     this.setState({ url: value });
   },
-
   handleMobileFlag: function(value) {
     this.setState({ isMobile: value });
   },
-
   render: function() {
     return (
       <div>
@@ -147,6 +184,11 @@ var routes = (
   <Route name="app" path="/" handler={App} />
 );
 
+var stores = {
+  ScreenshotStore: new ScreenshotStore()
+};
+var flux = new Fluxxor.Flux(stores, actions);
+
 Router.run(routes, Router.HistoryLocation, function (Handler) {
-  React.render(<Handler />, document.getElementById('app-container'));
+  React.render(<Handler flux={flux} />, document.getElementById('app-container'));
 });
