@@ -166,7 +166,7 @@ var ScreenShotList = React.createClass({
 });
 
 var ScreenShot = React.createClass({
-  propTYpes: {
+  propTypes: {
     screenshot: React.PropTypes.shape({
       id: React.PropTypes.number.isRequired,
       data: React.PropTypes.string.isRequired
