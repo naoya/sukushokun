@@ -1,7 +1,13 @@
-var React = require('react');
+var React   = require('react');
 var request = require('superagent');
+var Router  = require('react-router');
+
+var Route       = Router.Route;
+var RouteHandler = Router.RouteHandler;
 
 var App = React.createClass({
+  mixins: [ Router.State ],
+
   getInitialState: function() {
     return {
       screenshots: [],
@@ -9,6 +15,11 @@ var App = React.createClass({
       url:         null
     };
   },
+
+  componentDidMount: function() {
+    this.handleUrl(this.getQuery().url);
+  },
+  
   takeScreenShot: function() {
     if (!this.state.url) {
       window.alert('URLを入力してね');
@@ -39,9 +50,10 @@ var App = React.createClass({
     return (
       <div>
         <h1>スクショ撮る君</h1>
-        <Form onSubmit={this.takeScreenShot} onUrlChange={this.handleUrl}  />
+        <Form onSubmit={this.takeScreenShot} onUrlChange={this.handleUrl} url={this.state.url} />
         <Indicator loading={this.state.loading} />
         <ScreenShotList screenshots={this.state.screenshots} />
+        <RouteHandler />
       </div>
     );
   }
@@ -49,6 +61,7 @@ var App = React.createClass({
 
 var Form = React.createClass({
   propTypes: {
+    url:         React.PropTypes.string,
     onUrlChange: React.PropTypes.func.isRequired,
     onSubmit:    React.PropTypes.func.isRequired,
   },
@@ -61,7 +74,7 @@ var Form = React.createClass({
   render: function() {
     return (
       <div>
-        <input id="url" type="text" placeholder="http://" onChange={this.handleUrlChange} />
+        <input id="url" type="text" placeholder="http://" onChange={this.handleUrlChange} value={this.props.url} />
         <button id="btn-screenshot" onClick={this.handleButton}>撮る</button>
       </div>
     );
@@ -113,7 +126,10 @@ var ScreenShot = React.createClass({
   }
 });
 
-React.render(
-  <App />,
-  document.getElementById('app-container')
+var routes = (
+  <Route name="app" path="/" handler={App} />
 );
+
+Router.run(routes, Router.HistoryLocation, function (Handler) {
+  React.render(<Handler />, document.getElementById('app-container'));
+});
