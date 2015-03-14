@@ -1,4 +1,5 @@
 var React = require('react');
+var request = require('superagent');
 
 var App = React.createClass({
   getInitialState: function() {
@@ -16,23 +17,20 @@ var App = React.createClass({
 
     this.setState({ loading: true });
 
-    var request = '/screenshot?url=' + encodeURIComponent(this.state.url);
+    var endpoint = '/screenshot?url=' + encodeURIComponent(this.state.url);
     // if ($('#is-mobile').prop('checked')) {
-    //   request += '&mobile=true';
+    //   endpoint += '&mobile=true';
     // }    
 
-    // FIXME: get rid of jQuery
-    $.ajax({
-      url: request
-    }).done(function(data) {
-      var screenshot = { id:3, data:data };
-      this.setState({
-        screenshots: [screenshot].concat(this.state.screenshots),
-        loading:     false
-      });
-    }.bind(this)).fail(function(data) {
-      this.setState({ loading: false });
-    });
+    request
+      .get(endpoint)
+      .end(function (err, response) {
+        var screenshot = { id:3, data:response.text };
+        this.setState({
+          screenshots: [screenshot].concat(this.state.screenshots),
+          loading:     false
+        });     
+      }.bind(this));
   },
   handleUrl: function(value) {
     this.setState({ url: value });
