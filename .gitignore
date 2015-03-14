@@ -34,5 +34,21 @@ tmp
 .yardoc
 _yardoc
 doc/
+### https://raw.github.com/github/gitignore/f31b319dca10213163411cb710c27dc37ed3eac5/node.gitignore
 
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+results
+
+npm-debug.log
+node_modules
 

@@ -1,0 +1,18 @@
+{
+  "name": "sukushokun",
+  "bin": {
+    "sukushokun": "screenshot.js"
+  },
+  "scripts": {
+    "react": "gulp react",
+    "watch": "gulp watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-plumber": "^1.0.0",
+    "gulp-react": "^3.0.1"
+  }
+}
